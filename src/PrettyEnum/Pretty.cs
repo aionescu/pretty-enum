@@ -2,14 +2,38 @@ namespace PrettyEnum {
   using System;
   using System.Linq;
 
+  /// <summary>
+  /// Static class that contains methods for parsing pretty-printed enum values.
+  /// </summary>
   public static class Pretty {
+    /// <summary>
+    /// The default separator to use when pretty-printing enums annotated with <see cref="System.FlagsAttribute"/>.
+    /// </summary>
     public static readonly string DefaultFlagSeparator = " | ";
 
+    /// <summary>
+    /// Parses the specifed pretty-printed string back into its corresponding enum value.
+    /// </summary>
+    /// <typeparam name="T">The type of the enum.</typeparam>
+    /// <param name="prettyName">The pretty-printed string to parse.</param>
+    /// <param name="flagSeparator">The string that was used to separate flags when pretty-printing, in case <typeparamref name="T"/>
+    /// is annotated with <see cref="System.FlagsAttribute"/>. Defaults to <see cref="Pretty.DefaultFlagSeparator"/>.</param>
+    /// <returns>The enum value that corresponds to the specified pretty-printed string.</returns>
+    /// <exception cref="System.FormatException">Thrown if <paramref name="prettyName"/> is not the pretty name of any enum value.</exception>
     public static T Parse<T>(string prettyName, string flagSeparator = null) where T : struct, Enum =>
       TryParse<T>(prettyName, out var result, flagSeparator)
       ? result
       : throw new FormatException("Input string was not in a correct format.");
 
+    /// <summary>
+    /// Attempts to parse the specifed pretty-printed string back into its corresponding enum value.
+    /// </summary>
+    /// <typeparam name="T">The type of the enum.</typeparam>
+    /// <param name="prettyName">The pretty-printed string to parse.</param>
+    /// <param name="result">The enum value that corresponds to the specified pretty-printed string, if it exists.</param>
+    /// <param name="flagSeparator">The string that was used to separate flags when pretty-printing, in case <typeparamref name="T"/>
+    /// is annotated with <see cref="System.FlagsAttribute"/>. Defaults to <see cref="Pretty.DefaultFlagSeparator"/>.</param>
+    /// <returns>A boolean value indicating whether parsing was successful.</returns>
     public static bool TryParse<T>(string prettyName, out T result, string flagSeparator = null) where T : struct, Enum {
       PrettyNameCache<T>._populateSingleValueCache();
 

@@ -5,21 +5,35 @@ namespace PrettyEnum {
   using System.Reflection;
   using System.Text.RegularExpressions;
 
+  /// <summary>
+  /// Static class that contains pretty-printing extension methods for enum types.
+  /// </summary>
   public static class EnumExtensions {
-    public static string PrettyPrint<T>(this T @this, string flagSeparator = null, bool throwOnUndefinedValue = true) where T : struct, Enum {
+    /// <summary>
+    /// Pretty-prints the provided enum value.
+    /// </summary>
+    /// <typeparam name="T">The type of the enum.</typeparam>
+    /// <param name="enumValue">The enum value to pretty-print.</param>
+    /// <param name="flagSeparator">The string that should be used to separate flags in case <typeparamref name="T"/>
+    /// is annotated with <see cref="System.FlagsAttribute"/>. Defaults to <see cref="Pretty.DefaultFlagSeparator"/>.</param>
+    /// <param name="throwOnUndefinedValue">A boolean representing whether to throw an exception if <paramref name="enumValue"/>
+    /// is not a defined value of <typeparamref name="T"/>.</param>
+    /// <returns></returns>
+    /// <exception cref="System.ArgumentException">Thrown when <paramref name="throwOnUndefinedValue"/> is <c>true</c> and <paramref name="enumValue"/> is not a defined value of <typeparamref name="T"/>.</exception>
+    public static string PrettyPrint<T>(this T enumValue, string flagSeparator = null, bool throwOnUndefinedValue = true) where T : struct, Enum {
       flagSeparator = flagSeparator ?? Pretty.DefaultFlagSeparator;
 
-      if (PrettyNameCache<T>._isSingleValueCached(@this, out var singleValuePrettyName))
+      if (PrettyNameCache<T>._isSingleValueCached(enumValue, out var singleValuePrettyName))
         return singleValuePrettyName;
-      else if (typeof(T)._hasAttribute<FlagsAttribute>() && PrettyNameCache<T>._isMultiFlagsCached(@this, flagSeparator, out var multiFlagsPrettyName))
+      else if (typeof(T)._hasAttribute<FlagsAttribute>() && PrettyNameCache<T>._isMultiFlagsCached(enumValue, flagSeparator, out var multiFlagsPrettyName))
         return multiFlagsPrettyName;
       else {
-        var (isMultiFlags, prettyName) = _prettyPrintNoCache<T>(@this, flagSeparator, throwOnUndefinedValue);
+        var (isMultiFlags, prettyName) = _prettyPrintNoCache<T>(enumValue, flagSeparator, throwOnUndefinedValue);
 
         if (isMultiFlags)
-          PrettyNameCache<T>._addToMultiFlagsCache(@this, flagSeparator, prettyName);
+          PrettyNameCache<T>._addToMultiFlagsCache(enumValue, flagSeparator, prettyName);
         else
-          PrettyNameCache<T>._addToSingleValueCache(@this, prettyName);
+          PrettyNameCache<T>._addToSingleValueCache(enumValue, prettyName);
 
         return prettyName;
       }
