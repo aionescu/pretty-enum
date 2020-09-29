@@ -1,6 +1,6 @@
 # pretty-enum
 
-![NuGet](https://img.shields.io/nuget/v/pretty-enum?style=for-the-badge)
+[![NuGet](https://img.shields.io/nuget/v/pretty-enum?style=for-the-badge)](https://nuget.org/packages/pretty-enum)
 
 A .NET Standard library for pretty-printing enum values
 
