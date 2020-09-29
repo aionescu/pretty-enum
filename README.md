@@ -1,5 +1,7 @@
 # pretty-enum
 
+![NuGet](https://img.shields.io/nuget/v/pretty-enum?style=for-the-badge)
+
 A .NET Standard library for pretty-printing enum values
 
 ## Usage
@@ -7,8 +9,6 @@ A .NET Standard library for pretty-printing enum values
 `pretty-enum` aims to be as easy to use out-of-the-box as possible.
 
 All you need for the examples below is `using PrettyEnum;`.
-
-**Disclaimer**: The library's API is still under development, there may be breaking changes in the future.
 
 To use the default pretty-printer to format an enum value, just use `enum.PrettyPrint()`. It will automatically format `PascalCase`, `camelCase`, `Snake_case`, and `UPPER_SNAKE_CASE` enums to `Title Case`.
 
