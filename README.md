@@ -60,7 +60,7 @@ Example:
 
 ```cs
 Pretty.Parse<DeliveryOptions>("Same Day | Fragile") // == (DeliveryOptions.SameDay | DeliveryOptions.ExtraPackaging)
-Pretty.TryParse<DeliveryOptions>("Same Day, Contactless", out var enum, flagSeparator: ", ") // returns true, enum == (DeliveryOptions.SameDay | DeliveryOptions.Contactless)
+Pretty.TryParse<DeliveryOptions>("Same Day, Contactless", out var value, flagSeparator: ", ") // returns true, value == (DeliveryOptions.SameDay | DeliveryOptions.Contactless)
 ```
 
 ## License
