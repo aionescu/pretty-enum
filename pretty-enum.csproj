@@ -2,9 +2,25 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.3</LangVersion>
-    <RootNamespace>PrettyEnum</RootNamespace>
+
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Configuration>Release</Configuration>
     <Optimize>true</Optimize>
+
+    <RootNamespace>PrettyEnum</RootNamespace>
+
+    <!--NuGet Metadata-->
+    <PackageId>pretty-enum</PackageId>
+    <Title>PrettyEnum</Title>
+    <Description>Library for pretty-printing enum values</Description>
+    <PackageTags>enum;pretty-printer</PackageTags>
+    <Version>1.0.0</Version>
+    <RepositoryUrl>https://github.com/aionescu/pretty-enum</RepositoryUrl>
+    <RepositoryBranch>master</RepositoryBranch>
+
+    <Authors>Alex Ionescu</Authors>
+    <Company>MOPS Technologies</Company>
+    <Copyright>Copyright (C) 2020 Alex Ionescu</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 </Project>

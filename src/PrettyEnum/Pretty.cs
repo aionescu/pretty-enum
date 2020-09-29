@@ -1,3 +1,5 @@
+[assembly: System.CLSCompliant(true)]
+
 namespace PrettyEnum {
   using System;
   using System.Linq;
