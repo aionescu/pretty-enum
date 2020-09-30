@@ -2,7 +2,7 @@ namespace PrettyEnum {
   using System;
 
   /// <summary>
-  /// Signals that when pretty-printing the enum value it is applied to,
+  /// Signals that when pretty-printing the enum value this attribute is applied to,
   /// the specified string should be returned.
   /// </summary>
   [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]

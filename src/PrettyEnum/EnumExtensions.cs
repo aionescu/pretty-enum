@@ -1,5 +1,6 @@
 namespace PrettyEnum {
   using System;
+  using System.Collections.Generic;
   using System.ComponentModel;
   using System.Linq;
   using System.Reflection;
@@ -71,12 +72,14 @@ namespace PrettyEnum {
           ? rawName
           : descAttr.Description;
 
+      var preserveCase = typeof(T)._hasAttribute<PreserveCaseAttribute>() || field._hasAttribute<PreserveCaseAttribute>();
+
       return
         rawName.Contains("_")
-        ? _fromSnakeCase(rawName)
-        : _fromCamelCase(rawName);
+        ? _fromSnakeCase(rawName, preserveCase)
+        : _fromCamelCase(rawName, preserveCase);
     }
-        
+    
     private static string _fromFlags<T>(T value, string flagSeparator, bool throwOnUndefinedValue) where T : struct, Enum {
       var flags = Enum.GetValues(typeof(T)).Cast<T>().Where(f => value.HasFlag(f)).Select(f => _fromSingleValue(f, false));
 
@@ -91,15 +94,12 @@ namespace PrettyEnum {
       ? throw new ArgumentException($"Value {value} is not defined for the enum type {typeof(T).Name}.")
       : $"Undefined[{value}]";
 
-    private static string _fromSnakeCase(string s) =>
-      string.Join(" ", s.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries).Select(_capitalize));
-    
-    private static string _capitalize(string s) =>
-      char.IsLetter(s[0])
-      ? char.ToUpper(s[0]) + s.Substring(1).ToLower()
-      : s;
+    private static string _fromSnakeCase(string s, bool preserveCase) {
+      var words = s.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+      return string.Join(" ", preserveCase ? words : words.Select(_capitalize));
+    }
 
-    private static string _fromCamelCase(string s) {
+    private static string _fromCamelCase(string s, bool preserveCase) {
       var replaced =
         s
         ._regexReplace("([A-Z])([a-z])", " $1$2")
@@ -107,8 +107,15 @@ namespace PrettyEnum {
         ._regexReplace("([0-9])([a-z]|[A-Z])", " $1$2")
         ._regexReplace("([a-z]|[A-Z])([0-9])", "$1 $2");
 
-      return string.Join(" ", replaced.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(_capitalize));
+      var words = replaced.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+      return string.Join(" ", preserveCase ? words : words.Select(_capitalize));
     }
+
+    private static string _capitalize(string s) =>
+      char.IsLetter(s[0])
+      ? char.ToUpper(s[0]) + s.Substring(1).ToLower()
+      : s;
 
     private static string _regexReplace(this string @this, string pattern, string replacement) => Regex.Replace(@this, pattern, replacement, RegexOptions.Compiled);
 

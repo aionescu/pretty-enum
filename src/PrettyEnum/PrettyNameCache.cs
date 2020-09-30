@@ -32,5 +32,13 @@ namespace PrettyEnum {
     /// Clears the cache of pretty names for enum values of type <typeparamref name="T"/> composed of multiple flags.
     /// </summary>
     public static void ClearMultiFlagsCache() => _multiFlagsCache.Clear();
+
+    /// <summary>
+    /// Clears all caches associated with the type <typeparamref name="T"/>.
+    /// </summary>
+    public static void Clear() {
+      ClearSingleValueCache();
+      ClearMultiFlagsCache();
+    }
   }
 }
