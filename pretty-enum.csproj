@@ -18,9 +18,12 @@
     <RepositoryUrl>https://github.com/aionescu/pretty-enum</RepositoryUrl>
     <RepositoryBranch>master</RepositoryBranch>
 
+    <IncludeSource>true</IncludeSource>
+    
     <Authors>Alex Ionescu</Authors>
     <Company>MOPS Technologies</Company>
     <Copyright>Copyright (C) 2020 Alex Ionescu</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 </Project>
