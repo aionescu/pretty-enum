@@ -8,6 +8,8 @@ namespace PrettyEnum {
   /// </summary>
   /// <typeparam name="T">The type of the enum.</typeparam>
   public static class PrettyNameCache<T> where T : struct, Enum {
+    internal static readonly T[] _enumValues = Enum.GetValues(typeof(T)) as T[];
+
     internal static readonly Dictionary<T, string> _singleValueCache = new Dictionary<T, string>();
     internal static readonly Dictionary<(T EnumValue, string FlagSeparator), string> _multiFlagsCache = new Dictionary<(T, string), string>();
 
@@ -18,7 +20,7 @@ namespace PrettyEnum {
     internal static bool _isMultiFlagsCached(T value, string flagSeparator, out string prettyName) => _multiFlagsCache.TryGetValue((value, flagSeparator), out prettyName);
 
     internal static void _populateSingleValueCache() {
-      foreach (var value in Enum.GetValues(typeof(T)).Cast<T>())
+      foreach (var value in _enumValues)
         if (!_singleValueCache.ContainsKey(value))
           _singleValueCache[value] = EnumExtensions._fromSingleValue(value, false);
     }
