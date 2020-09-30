@@ -14,12 +14,14 @@
     <Title>PrettyEnum</Title>
     <Description>Library for pretty-printing enum values</Description>
     <PackageTags>enum;pretty-printer</PackageTags>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <RepositoryUrl>https://github.com/aionescu/pretty-enum</RepositoryUrl>
     <RepositoryBranch>master</RepositoryBranch>
 
+    <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
-    
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
     <Authors>Alex Ionescu</Authors>
     <Company>MOPS Technologies</Company>
     <Copyright>Copyright (C) 2020 Alex Ionescu</Copyright>
