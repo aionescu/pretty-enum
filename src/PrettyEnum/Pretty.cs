@@ -23,7 +23,7 @@ namespace PrettyEnum {
 
       var matchCaseInsensitive =
         PrettyNameCache<T>._singleValueCache
-        .FirstOrDefault(kvp => kvp.Value.ToUpperInvariant() == value.ToUpperInvariant());
+        .FirstOrDefault(kvp => kvp.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
       
       if (matchCaseInsensitive.Value != null) {
         result = matchCaseInsensitive.Key;
