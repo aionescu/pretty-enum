@@ -14,7 +14,7 @@
     <Title>PrettyEnum</Title>
     <Description>Library for pretty-printing enum values</Description>
     <PackageTags>enum;pretty-printer</PackageTags>
-    <Version>1.2.2</Version>
+    <Version>1.2.3</Version>
     <RepositoryUrl>https://github.com/aionescu/pretty-enum</RepositoryUrl>
     <RepositoryBranch>master</RepositoryBranch>
 
