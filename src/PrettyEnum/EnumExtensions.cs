@@ -27,7 +27,7 @@ namespace PrettyEnum {
 
     private static string _capitalize(string s) =>
       char.IsLetter(s[0])
-      ? char.ToUpper(s[0]) + s.Substring(1).ToLower()
+      ? char.ToUpperInvariant(s[0]) + s.Substring(1).ToLowerInvariant()
       : s;
 
     private static string _fromUndefined<T>(T value, bool throwOnUndefinedValue) where T : struct, Enum =>
