@@ -53,19 +53,7 @@ namespace PrettyEnum {
       return string.Join(" ", preserveCase ? words : words.Select(_capitalize));
     }
 
-    private static string _fromMultiFlags<T>(T value, string flagSeparator, bool throwOnUndefinedValue) where T : struct, Enum {
-      var flags = PrettyNameCache<T>._enumValues.Where(f => value.HasFlag(f)).Select(f => _fromSingleValue(f, false));
-
-      if (!flags.Any())
-        return _fromUndefined(value, throwOnUndefinedValue);
-
-      return string.Join(flagSeparator, flags);
-    }
-
     internal static string _fromSingleValue<T>(T value, bool throwOnUndefinedValue) where T : struct, Enum {
-      if (!Enum.IsDefined(typeof(T), value))
-        return _fromUndefined(value, throwOnUndefinedValue);
-
       var rawName = value.ToString();
       var field = typeof(T).GetField(rawName);
 
@@ -92,14 +80,19 @@ namespace PrettyEnum {
         : _fromCamelCase(rawName, preserveCase);
     }
 
-    internal static (bool IsMultiFlags, string PrettyName) _prettyPrintNoCache<T>(this T @this, string flagSeparator = null, bool throwOnUndefinedValue = true) where T : struct, Enum {
-      if (typeof(T)._hasAttribute<IgnorePrettyPrintAttribute>())
-        return (false, @this.ToString());
+    private static string _fromMultiFlags<T>(T value, string flagSeparator, bool throwOnUndefinedValue) where T : struct, Enum {
+      if (PrettyNameCache<T>._multiFlagsCache.TryGetValue((value, flagSeparator), out var cachedName))
+        return cachedName;
 
-      if (typeof(T)._hasAttribute<FlagsAttribute>() && !Enum.IsDefined(typeof(T), @this))
-        return (true, _fromMultiFlags(@this, flagSeparator ?? Pretty.DefaultFlagSeparator, throwOnUndefinedValue));
-      else
-        return (false, _fromSingleValue(@this, throwOnUndefinedValue));
+      var flags = PrettyNameCache<T>._enumValues.Where(f => value.HasFlag(f)).Select(f => _fromSingleValue(f, false));
+
+      if (!flags.Any())
+        return _fromUndefined(value, throwOnUndefinedValue);
+
+      var prettyName = string.Join(flagSeparator, flags);
+      PrettyNameCache<T>._multiFlagsCache[(value, flagSeparator)] = prettyName;
+
+      return prettyName;
     }
 
     /// <summary>
@@ -114,22 +107,18 @@ namespace PrettyEnum {
     /// <returns></returns>
     /// <exception cref="System.ArgumentException">Thrown when <paramref name="throwOnUndefinedValue"/> is <c>true</c> and <paramref name="enumValue"/> is not a defined value of <typeparamref name="T"/>.</exception>
     public static string PrettyPrint<T>(this T enumValue, string flagSeparator = null, bool throwOnUndefinedValue = true) where T : struct, Enum {
-      flagSeparator = flagSeparator ?? Pretty.DefaultFlagSeparator;
+      if (typeof(T)._hasAttribute<IgnorePrettyPrintAttribute>())
+        return enumValue.ToString();
 
-      if (PrettyNameCache<T>._isSingleValueCached(enumValue, out var singleValuePrettyName))
-        return singleValuePrettyName;
-      else if (typeof(T)._hasAttribute<FlagsAttribute>() && PrettyNameCache<T>._isMultiFlagsCached(enumValue, flagSeparator, out var multiFlagsPrettyName))
-        return multiFlagsPrettyName;
-      else {
-        var (isMultiFlags, prettyName) = _prettyPrintNoCache<T>(enumValue, flagSeparator, throwOnUndefinedValue);
+      if (typeof(T)._hasAttribute<FlagsAttribute>() && !Enum.IsDefined(typeof(T), enumValue))
+        return _fromMultiFlags(enumValue, flagSeparator ?? Pretty.DefaultFlagSeparator, throwOnUndefinedValue);
 
-        if (isMultiFlags)
-          PrettyNameCache<T>._addToMultiFlagsCache(enumValue, flagSeparator, prettyName);
-        else
-          PrettyNameCache<T>._addToSingleValueCache(enumValue, prettyName);
+      PrettyNameCache<T>._populateSingleValueCache();
 
-        return prettyName;
-      }
+      if (PrettyNameCache<T>._singleValueCache.TryGetValue(enumValue, out var cachedPrettyName))
+        return cachedPrettyName;
+
+      return _fromUndefined(enumValue, throwOnUndefinedValue);
     }
   }
 }

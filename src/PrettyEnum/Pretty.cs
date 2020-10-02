@@ -54,11 +54,12 @@ namespace PrettyEnum {
       PrettyNameCache<T>._populateSingleValueCache();
 
       var enumValues = PrettyNameCache<T>._enumValues;
+      var singleValueCache = PrettyNameCache<T>._singleValueCache;
 
       var names = new string[enumValues.Length];
 
       for (int i = 0; i < names.Length; ++i)
-        names[i] = PrettyNameCache<T>._singleValueCache[enumValues[i]];
+        names[i] = singleValueCache[enumValues[i]];
 
       return names;
     }
@@ -73,6 +74,9 @@ namespace PrettyEnum {
     /// is annotated with <see cref="System.FlagsAttribute"/>. Defaults to <see cref="Pretty.DefaultFlagSeparator"/>.</param>
     /// <returns>A boolean value indicating whether parsing was successful.</returns>
     public static bool TryParse<T>(string prettyName, out T result, string flagSeparator = null) where T : struct, Enum {
+      if (typeof(T)._hasAttribute<IgnorePrettyPrintAttribute>())
+        return Enum.TryParse<T>(prettyName, out result);
+
       PrettyNameCache<T>._populateSingleValueCache();
 
       if (_tryParseSingleValue(prettyName, out result))
