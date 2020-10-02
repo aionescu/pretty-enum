@@ -10,7 +10,15 @@ A .NET Standard library for pretty-printing enum values
 
 All you need for the examples below is `using PrettyEnum;`.
 
-To use the default pretty-printer to format an enum value, just use `enum.PrettyPrint()`. It will automatically format `PascalCase`, `camelCase`, `Snake_case`, and `UPPER_SNAKE_CASE` enums to `Title Case`.
+To use the default pretty-printer to format an enum value, just use `enum.PrettyPrint()`. It will automatically format `PascalCase`, `camelCase`, `Snake_Case`, and `UPPER_SNAKE_CASE` (as well as `MixedVersions_OfThem`) to `Title Case`.
+
+Examples:
+
+```cs
+StringSplitOptions.RemoveEmptyEntries.PrettyPrint() == "Remove Empty Entries"
+SomeEnum.UPPER_SNAKE_CASE.PrettyPrint() == "Upper Snake Case"
+SomeEnum.MixedCamel_AndSnake.PrettyPrint() == "Mixed Camel And Snake"
+```
 
 To specify a custom value to be used when pretty-printng, annotate the enum field with `PrettyNameAttribute`, like so:
 

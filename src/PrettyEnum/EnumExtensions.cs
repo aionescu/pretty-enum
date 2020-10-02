@@ -48,11 +48,6 @@ namespace PrettyEnum {
       return string.Join(" ", preserveCase ? words : words.Select(_capitalize));
     }
 
-    private static string _fromSnakeCase(string s, bool preserveCase) {
-      var words = s.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
-      return string.Join(" ", preserveCase ? words : words.Select(_capitalize));
-    }
-
     internal static string _fromSingleValue<T>(T value, bool throwOnUndefinedValue) where T : struct, Enum {
       var rawName = value.ToString();
       var field = typeof(T).GetField(rawName);
@@ -74,10 +69,12 @@ namespace PrettyEnum {
 
       var preserveCase = typeof(T)._hasAttribute<PreserveCaseAttribute>() || field._hasAttribute<PreserveCaseAttribute>();
 
-      return
-        rawName.Contains("_")
-        ? _fromSnakeCase(rawName, preserveCase)
-        : _fromCamelCase(rawName, preserveCase);
+      var words =
+        rawName
+        .Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(s => _fromCamelCase(s, preserveCase));
+
+      return string.Join(" ", words);
     }
 
     private static string _fromMultiFlags<T>(T value, string flagSeparator, bool throwOnUndefinedValue) where T : struct, Enum {
