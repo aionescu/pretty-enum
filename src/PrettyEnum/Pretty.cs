@@ -16,12 +16,21 @@ namespace PrettyEnum {
     private static bool _tryParseSingleValue<T>(string value, out T result) where T : struct, Enum {
       var match = PrettyNameCache<T>._singleValueCache.FirstOrDefault(kvp => kvp.Value == value);
 
-      if (match.Value is null)
-        return Enum.TryParse(value, out result);
-      else {
+      if (match.Value != null) {
         result = match.Key;
         return true;
       }
+
+      var matchCaseInsensitive =
+        PrettyNameCache<T>._singleValueCache
+        .FirstOrDefault(kvp => kvp.Value.ToUpperInvariant() == value.ToUpperInvariant());
+      
+      if (matchCaseInsensitive.Value != null) {
+        result = matchCaseInsensitive.Key;
+        return true;
+      }
+
+      return Enum.TryParse(value, out result);
     }
 
     private static T _parseSingleValue<T>(string value) where T : struct, Enum =>
