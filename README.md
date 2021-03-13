@@ -37,6 +37,13 @@ PrettyEnum also recognizes `DescriptionAttribute` from `System.ComponentModel` (
 
 You can also annotate either enum fields or whole enum types with the `IgnorePrettyPrintAttribute`, in which case the pretty-printer will just use the name of the enum field(s).
 
+It's also possible to get an array containing all the pretty names of a particular enum type:
+
+```cs
+Pretty.GetNames<DeliveryOptions>() // == ["Same Day", "Fragile", "Contactless"]
+Pretty.GetNames(typeof(Color)) // == ["Red", "Dark Red", "Even Darker Red"]
+```
+
 ### Flags
 
 The library can also handle flag-like enums (i.e. enums annotated wtih `FlagsAttribute`).
@@ -68,6 +75,7 @@ Example:
 
 ```cs
 Pretty.Parse<DeliveryOptions>("Same Day | Fragile") // == (DeliveryOptions.SameDay | DeliveryOptions.ExtraPackaging)
+Pretty.Parse(typeof(BindingFlags), "Public | Static") // == (BindingFlags.Public | BindingFlags.Static)
 Pretty.TryParse<DeliveryOptions>("Same Day, Contactless", out var value, flagSeparator: ", ") // returns true, value == (DeliveryOptions.SameDay | DeliveryOptions.Contactless)
 ```
 
