@@ -9,7 +9,8 @@ namespace PrettyEnum {
   /// Static class that contains pretty-printing extension methods for enum types.
   /// </summary>
   public static class EnumExtensions {
-    internal static bool _hasAttribute<TAttribute>(this MemberInfo @this, out TAttribute attribute) where TAttribute : Attribute {
+    internal static bool _hasAttribute<TAttribute>(this MemberInfo @this, out TAttribute attribute)
+    where TAttribute: Attribute {
       var attrs = @this.GetCustomAttributes(typeof(TAttribute), false) as TAttribute[];
 
       if (attrs.Length > 0) {
@@ -21,21 +22,23 @@ namespace PrettyEnum {
       }
     }
 
-    internal static bool _hasAttribute<TAttribute>(this MemberInfo @this) where TAttribute : Attribute => @this._hasAttribute<TAttribute>(out _);
+    internal static bool _hasAttribute<TAttribute>(this MemberInfo @this) where TAttribute: Attribute
+      => @this._hasAttribute<TAttribute>(out _);
 
-    private static string _regexReplace(this string @this, string pattern, string replacement) => Regex.Replace(@this, pattern, replacement, RegexOptions.Compiled);
+    static string _regexReplace(this string @this, string pattern, string replacement)
+      => Regex.Replace(@this, pattern, replacement, RegexOptions.Compiled);
 
-    private static string _capitalize(string s) =>
+    static string _capitalize(string s) =>
       char.IsLetter(s[0])
       ? char.ToUpperInvariant(s[0]) + s.Substring(1).ToLowerInvariant()
       : s;
 
-    private static string _fromUndefined<T>(T value, bool throwOnUndefinedValue) where T : struct, Enum =>
+    static string _fromUndefined<T>(T value, bool throwOnUndefinedValue) where T: struct, Enum =>
       throwOnUndefinedValue
       ? throw new ArgumentException($"Value {value} is not defined for the enum type {typeof(T).Name}.")
       : $"Undefined[{value}]";
 
-    private static string _fromCamelCase(string s, bool preserveCase) {
+    static string _fromCamelCase(string s, bool preserveCase) {
       var replaced =
         s
         ._regexReplace("([A-Z])([a-z])", " $1$2")
@@ -48,7 +51,7 @@ namespace PrettyEnum {
       return string.Join(" ", preserveCase ? words : words.Select(_capitalize));
     }
 
-    internal static string _fromSingleValue<T>(T value, bool throwOnUndefinedValue) where T : struct, Enum {
+    internal static string _fromSingleValue<T>(T value, bool throwOnUndefinedValue) where T: struct, Enum {
       var rawName = value.ToString();
       var field = typeof(T).GetField(rawName);
 
@@ -77,7 +80,7 @@ namespace PrettyEnum {
       return string.Join(" ", words);
     }
 
-    private static string _fromMultiFlags<T>(T value, string flagSeparator, bool throwOnUndefinedValue) where T : struct, Enum {
+    static string _fromMultiFlags<T>(T value, string flagSeparator, bool throwOnUndefinedValue) where T: struct, Enum {
       if (PrettyNameCache<T>._multiFlagsCache.TryGetValue((value, flagSeparator), out var cachedName))
         return cachedName;
 
@@ -103,7 +106,8 @@ namespace PrettyEnum {
     /// is not a defined value of <typeparamref name="T"/>.</param>
     /// <returns></returns>
     /// <exception cref="System.ArgumentException">Thrown when <paramref name="throwOnUndefinedValue"/> is <c>true</c> and <paramref name="enumValue"/> is not a defined value of <typeparamref name="T"/>.</exception>
-    public static string PrettyPrint<T>(this T enumValue, string flagSeparator = null, bool throwOnUndefinedValue = true) where T : struct, Enum {
+    public static string PrettyPrint<T>(this T enumValue, string flagSeparator = null, bool throwOnUndefinedValue = true)
+    where T: struct, Enum {
       if (typeof(T)._hasAttribute<IgnorePrettyPrintAttribute>())
         return enumValue.ToString();
 

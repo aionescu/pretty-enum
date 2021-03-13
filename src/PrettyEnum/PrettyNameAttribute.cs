@@ -6,7 +6,7 @@ namespace PrettyEnum {
   /// the specified string should be returned.
   /// </summary>
   [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
-  public sealed class PrettyNameAttribute : Attribute {
+  public sealed class PrettyNameAttribute: Attribute {
     /// <summary>
     /// The string to return when pretty-printing the enum value this attribute is applied to.
     /// </summary>

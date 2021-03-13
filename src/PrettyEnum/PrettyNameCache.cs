@@ -7,7 +7,7 @@ namespace PrettyEnum {
   /// Static class that handles the caching of enum pretty names.
   /// </summary>
   /// <typeparam name="T">The type of the enum.</typeparam>
-  public static class PrettyNameCache<T> where T : struct, Enum {
+  public static class PrettyNameCache<T> where T: struct, Enum {
     internal static readonly T[] _enumValues = Enum.GetValues(typeof(T)) as T[];
 
     internal static bool _isSingleValueCachePopulated = false;
