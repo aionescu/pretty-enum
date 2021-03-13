@@ -75,6 +75,26 @@ namespace PrettyEnum {
     }
 
     /// <summary>
+    /// Returns an array containing the pretty names of all values of type <paramref name="enumType"/>.
+    /// </summary>
+    /// <param name="enumType">The type of the enum.</param>
+    /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="enumType"/> is null.</exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown if <paramref name="enumType"/> is not an enum type.</exception>
+    public static string[] GetNames(Type enumType) {
+      if (enumType is null)
+        throw new ArgumentNullException(nameof(enumType));
+
+      if (!enumType.IsEnum)
+        throw new ArgumentOutOfRangeException(nameof(enumType), "The specified type must be an enum type.");
+
+      return
+        ReflectionCache._getNames
+        .MakeGenericMethod(new[] { enumType })
+        .Invoke(null, Array.Empty<object>())
+        as string[];
+    }
+
+    /// <summary>
     /// Attempts to parse the specifed pretty-printed string back into its corresponding enum value.
     /// </summary>
     /// <typeparam name="T">The type of the enum.</typeparam>
@@ -114,5 +134,30 @@ namespace PrettyEnum {
       TryParse<T>(prettyName, out var result, flagSeparator)
       ? result
       : throw new FormatException("Input string was not in a correct format.");
+
+    /// <summary>
+    /// Parses the specifed pretty-printed string back into its corresponding enum value.
+    /// </summary>
+    /// <param name="enumType">The type of the enum.</param>
+    /// <param name="prettyName">The pretty-printed string to parse.</param>
+    /// <param name="flagSeparator">The string that was used to separate flags when pretty-printing, in case <paramref name="enumType"/>
+    /// is annotated with <see cref="System.FlagsAttribute"/>. Defaults to <see cref="Pretty.DefaultFlagSeparator"/>.</param>
+    /// <returns>The enum value that corresponds to the specified pretty-printed string.</returns>
+    /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="enumType"/> is null.</exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown if <paramref name="enumType"/> is not an enum type.</exception>
+    /// <exception cref="System.FormatException">Thrown if <paramref name="prettyName"/> is not the pretty name of any enum value.</exception>
+    public static Enum Parse(Type enumType, string prettyName, string flagSeparator = null) {
+      if (enumType is null)
+        throw new ArgumentNullException(nameof(enumType));
+
+      if (!enumType.IsEnum)
+        throw new ArgumentOutOfRangeException(nameof(enumType), "The specified type must be an enum type.");
+
+      return
+        ReflectionCache._parse
+        .MakeGenericMethod(new[] { enumType })
+        .Invoke(null, new[] { prettyName, flagSeparator })
+        as Enum;
+    }
   }
 }

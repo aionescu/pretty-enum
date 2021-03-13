@@ -121,5 +121,33 @@ namespace PrettyEnum {
 
       return _fromUndefined(enumValue, throwOnUndefinedValue);
     }
+
+    /// <summary>
+    /// Pretty-prints the provided enum value.
+    /// </summary>
+    /// <param name="enumValue">The enum value to pretty-print.</param>
+    /// <param name="flagSeparator">The string that should be used to separate flags in case the object's enum type
+    /// is annotated with <see cref="System.FlagsAttribute"/>. Defaults to <see cref="Pretty.DefaultFlagSeparator"/>.</param>
+    /// <param name="throwOnUndefinedValue">A boolean representing whether to throw an exception if <paramref name="enumValue"/>
+    /// is not a defined value of its enum type.</param>
+    /// <returns></returns>
+    /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="enumValue"/> is null.</exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown if <paramref name="enumValue"/>'s type is not an enum type.</exception>
+    /// <exception cref="System.ArgumentException">Thrown when <paramref name="throwOnUndefinedValue"/> is <c>true</c> and <paramref name="enumValue"/> is not a defined value of its enum type.</exception>
+    public static string PrettyPrint(this object enumValue, string flagSeparator = null, bool throwOnUndefinedValue = true) {
+      if (enumValue is null)
+        throw new ArgumentNullException(nameof(enumValue));
+
+      var enumType = enumValue.GetType();
+
+      if (!enumType.IsEnum)
+        throw new ArgumentOutOfRangeException(nameof(enumValue), "The object's type must be an enum type.");
+
+      return
+        ReflectionCache._prettyPrint
+        .MakeGenericMethod(new[] { enumType })
+        .Invoke(null, new[] { enumValue, flagSeparator, throwOnUndefinedValue })
+        as string;
+    }
   }
 }
