@@ -4,6 +4,8 @@
     <LangVersion>7.3</LangVersion>
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
     <Configuration>Release</Configuration>
     <Optimize>true</Optimize>
 
