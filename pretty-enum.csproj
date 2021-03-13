@@ -16,7 +16,7 @@
     <PackageTags>enum;pretty-printer</PackageTags>
     <Version>1.2.3</Version>
     <RepositoryUrl>https://github.com/aionescu/pretty-enum</RepositoryUrl>
-    <RepositoryBranch>master</RepositoryBranch>
+    <RepositoryBranch>main</RepositoryBranch>
 
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
@@ -24,7 +24,7 @@
 
     <Authors>Alex Ionescu</Authors>
     <Company>MOPS Technologies</Company>
-    <Copyright>Copyright (C) 2020 Alex Ionescu</Copyright>
+    <Copyright>Copyright (C) 2020-2021 Alex Ionescu</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
