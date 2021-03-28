@@ -43,10 +43,10 @@ namespace PrettyEnum.Tests {
 
     [Fact]
     public void PrettyPrint_FullyIgnoreFormatting() {
-      Assert.Equal(Enum.GetNames<FullyIgnoreFormattingEnum>(), Pretty.GetNames<FullyIgnoreFormattingEnum>());
-
       var flags = FullyIgnoreFormattingEnum.Ignore1 | FullyIgnoreFormattingEnum.Ignore2 | FullyIgnoreFormattingEnum.Ignore8;
+
       Assert.Equal(flags.ToString(), flags.PrettyPrint());
+      Assert.Equal("Ignore1, Ignore2, Ignore8", flags.PrettyPrint(", "));
     }
 
     [Fact]
@@ -55,6 +55,12 @@ namespace PrettyEnum.Tests {
 
       Assert.Throws<ArgumentException>(() => undefined.PrettyPrint());
       Assert.Equal("Undefined[-1]", undefined.PrettyPrint(throwOnUndefinedValue: false));
+    }
+
+    [Fact]
+    public void GetNames_EnumHasIgnoreAttribute_ReturnSameArray() {
+      Assert.Equal(Enum.GetNames<FullyIgnoreFormattingEnum>(), Pretty.GetNames<FullyIgnoreFormattingEnum>());
+      Assert.Equal(Enum.GetNames(typeof(FullyIgnoreFormattingEnum)), Pretty.GetNames(typeof(FullyIgnoreFormattingEnum)));
     }
   }
 }
