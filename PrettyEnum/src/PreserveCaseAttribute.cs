@@ -3,7 +3,7 @@ namespace PrettyEnum {
 
   /// <summary>
   /// Signals that when the enum value this attribute is applied to is pretty-printed,
-  /// The case of the words in its name should be preserved.
+  /// the case of the words in its name should be preserved.
   /// <br/>
   /// If applied to an enum type, it will affect all of its values.
   /// </summary>

@@ -40,13 +40,6 @@ namespace PrettyEnum {
       : throw new FormatException("Input string was not in a correct format.");
 
     static bool _tryParseFlags<T>(string value, string flagSeparator, out T result) where T: struct, Enum {
-      var flagsMatch = PrettyNameCache<T>._multiFlagsCache.FirstOrDefault(kvp => kvp.Key.FlagSeparator == flagSeparator && kvp.Value == value);
-
-      if (flagsMatch.Value != null) {
-        result = flagsMatch.Key.EnumValue;
-        return true;
-      }
-
       try {
         var flags = value.Split(new[] { flagSeparator }, StringSplitOptions.None).Select(_parseSingleValue<T>);
         return Enum.TryParse(string.Join(",", flags), out result);
@@ -61,8 +54,6 @@ namespace PrettyEnum {
     /// </summary>
     /// <typeparam name="T">The type of the enum.</typeparam>
     public static string[] GetNames<T>() where T: struct, Enum {
-      PrettyNameCache<T>._populateSingleValueCache();
-
       var enumValues = PrettyNameCache<T>._enumValues;
       var singleValueCache = PrettyNameCache<T>._singleValueCache;
 
@@ -109,8 +100,6 @@ namespace PrettyEnum {
 
       if (typeof(T)._hasAttribute<IgnorePrettyPrintAttribute>())
         return Enum.TryParse<T>(prettyName, out result);
-
-      PrettyNameCache<T>._populateSingleValueCache();
 
       if (_tryParseSingleValue(prettyName, out result))
         return true;

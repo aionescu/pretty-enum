@@ -81,18 +81,12 @@ namespace PrettyEnum {
     }
 
     static string _fromMultiFlags<T>(T value, string flagSeparator, bool throwOnUndefinedValue) where T: struct, Enum {
-      if (PrettyNameCache<T>._multiFlagsCache.TryGetValue((value, flagSeparator), out var cachedName))
-        return cachedName;
-
-      var flags = PrettyNameCache<T>._enumValues.Where(f => value.HasFlag(f)).Select(f => _fromSingleValue(f, false));
+      var flags = PrettyNameCache<T>._enumValues.Where(f => value.HasFlag(f)).Select(f => PrettyNameCache<T>._singleValueCache[f]);
 
       if (!flags.Any())
         return _fromUndefined(value, throwOnUndefinedValue);
 
-      var prettyName = string.Join(flagSeparator, flags);
-      PrettyNameCache<T>._multiFlagsCache[(value, flagSeparator)] = prettyName;
-
-      return prettyName;
+      return string.Join(flagSeparator, flags);
     }
 
     /// <summary>
@@ -114,8 +108,6 @@ namespace PrettyEnum {
       if (typeof(T)._hasAttribute<FlagsAttribute>() && !Enum.IsDefined(typeof(T), enumValue))
         return _fromMultiFlags(enumValue, flagSeparator ?? Pretty.DefaultFlagSeparator, throwOnUndefinedValue);
 
-      PrettyNameCache<T>._populateSingleValueCache();
-
       if (PrettyNameCache<T>._singleValueCache.TryGetValue(enumValue, out var cachedPrettyName))
         return cachedPrettyName;
 
@@ -132,21 +124,17 @@ namespace PrettyEnum {
     /// is not a defined value of its enum type.</param>
     /// <returns></returns>
     /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="enumValue"/> is null.</exception>
-    /// <exception cref="System.ArgumentOutOfRangeException">Thrown if <paramref name="enumValue"/>'s type is not an enum type.</exception>
     /// <exception cref="System.ArgumentException">Thrown when <paramref name="throwOnUndefinedValue"/> is <c>true</c> and <paramref name="enumValue"/> is not a defined value of its enum type.</exception>
-    public static string PrettyPrint(this object enumValue, string flagSeparator = null, bool throwOnUndefinedValue = true) {
+    public static string PrettyPrint(this Enum enumValue, string flagSeparator = null, bool throwOnUndefinedValue = true) {
       if (enumValue is null)
         throw new ArgumentNullException(nameof(enumValue));
 
       var enumType = enumValue.GetType();
 
-      if (!enumType.IsEnum)
-        throw new ArgumentOutOfRangeException(nameof(enumValue), "The object's type must be an enum type.");
-
       return
         ReflectionCache._prettyPrint
         .MakeGenericMethod(new[] { enumType })
-        .Invoke(null, new[] { enumValue, flagSeparator, throwOnUndefinedValue })
+        .Invoke(null, new[] { enumValue as object, flagSeparator, throwOnUndefinedValue })
         as string;
     }
   }
