@@ -1,6 +1,7 @@
 namespace PrettyEnum.Tests {
   using System;
   using Xunit;
+  using TestEnums;
 
   public class PrettyPrinterTests {
     [Fact]

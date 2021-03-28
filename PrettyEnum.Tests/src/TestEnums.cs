@@ -1,4 +1,4 @@
-namespace PrettyEnum.Tests {
+namespace PrettyEnum.Tests.TestEnums {
   using System;
   using System.ComponentModel;
 
