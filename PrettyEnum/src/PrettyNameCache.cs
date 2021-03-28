@@ -4,7 +4,7 @@ namespace PrettyEnum {
 
   static class PrettyNameCache<T> where T: struct, Enum {
     internal static readonly T[] _enumValues = Enum.GetValues(typeof(T)) as T[];
-    internal static readonly Dictionary<T, string> _singleValueCache = new Dictionary<T, string>();
+    internal static readonly Dictionary<T, string> _singleValueCache = new();
 
     static PrettyNameCache() {
       foreach (var value in _enumValues)

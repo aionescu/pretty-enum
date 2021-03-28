@@ -15,7 +15,7 @@ namespace PrettyEnum {
     /// <summary>
     /// Constructs a new instance of the <see cref="PrettyNameAttribute"/> class with the specified <paramref name="prettyName"/>.
     /// </summary>
-    /// <param name="prettyName">The string to return when pretty-printing the enum value this attribute is applied to</param>
+    /// <param name="prettyName">The string to return when pretty-printing the enum value this attribute is applied to.</param>
     public PrettyNameAttribute(string prettyName) => PrettyName = prettyName;
   }
 }
