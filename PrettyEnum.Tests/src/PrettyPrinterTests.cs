@@ -28,6 +28,8 @@ namespace PrettyEnum.Tests {
 
       Assert.Equal("Custom Name", AttributesTestEnum.ExplicitCustomName.PrettyPrint());
       Assert.Equal("Overridden Name", AttributesTestEnum.DescriptionAndName.PrettyPrint());
+
+      Assert.Equal("Explicit preserve Case ATTRIBUTE", AttributesTestEnum.Explicit_preserveCase_ATTRIBUTE.PrettyPrint());
     }
 
     [Fact]

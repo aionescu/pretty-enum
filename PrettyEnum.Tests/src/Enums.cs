@@ -24,7 +24,10 @@ namespace PrettyEnum.Tests {
     ExplicitCustomName,
 
     [Description("Descritpion Name"), PrettyName("Overridden Name")]
-    DescriptionAndName
+    DescriptionAndName,
+
+    [PreserveCase]
+    Explicit_preserveCase_ATTRIBUTE
   }
 
   [Flags]
