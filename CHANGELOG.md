@@ -7,5 +7,6 @@
   * Parsing is now case-sensitive, and `PreserveCaseAttribute` has been removed.
   * `PrettyNameAttribute`s and `DescriptionAttribute`s with a `null` or whitespace-only argument are now fully ignored (previously they had the same effect as `IgnorePrettyPrintAttribute`).
   * Pretty-printing undefined enum values is no longer supported.
-* **\[Breaking\]** Removed non-generic methods.
-* Improved performance, including the caching of computed pretty names.
+* **\[Breaking\]** Removed non-generic APIs.
+* Added nullability annotations to all exposed APIs.
+* Improved performance, including caching of computed pretty names.

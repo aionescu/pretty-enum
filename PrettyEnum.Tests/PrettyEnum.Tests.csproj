@@ -2,9 +2,11 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <RollForward>Major</RollForward>
-    <LangVersion>latest</LangVersion>
-
     <IsPackable>false</IsPackable>
+
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
 
     <Configuration>Release</Configuration>
     <Optimize>true</Optimize>

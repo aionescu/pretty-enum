@@ -1,36 +1,35 @@
-namespace PrettyEnum.Tests {
-  using System;
-  using System.Reflection;
-  using TestEnums;
-  using Xunit;
+namespace PrettyEnum.Tests;
 
-  public class ParserTests {
-    [Fact]
-    public void Parse_SingleValues() {
-      Assert.Equal(FormatterTestEnum.PascalCase, Pretty.Parse<FormatterTestEnum>("Pascal Case"));
-      Assert.Equal(AttributesTestEnum.IgnorePrinting, Pretty.Parse<AttributesTestEnum>("IgnorePrinting"));
-      Assert.Equal(AttributesTestEnum.DescriptionAndName, Pretty.Parse<AttributesTestEnum>("Overridden Name"));
-    }
+using System.Reflection;
+using TestEnums;
+using Xunit;
 
-    [Fact]
-    public void Parse_Flags() {
-      Assert.Equal(FlagsTestEnum.Flag1 | FlagsTestEnum.Flag2, Pretty.Parse<FlagsTestEnum>("Flag 1 | Flag 2"));
-      Assert.Equal(FlagsTestEnum.Flag1 | FlagsTestEnum.Flag4, Pretty.Parse<FlagsTestEnum>("Flag 1, Flag 4", ", "));
-      Assert.Equal(FlagsTestEnum.Flag1 | FlagsTestEnum.Flag8, Pretty.Parse<FlagsTestEnum>("Flag Eight ||| Flag 1", " ||| "));
+public class ParserTests {
+  [Fact]
+  public void Parse_SingleValues() {
+    Assert.Equal(FormatterTestEnum.PascalCase, Pretty.Parse<FormatterTestEnum>("Pascal Case"));
+    Assert.Equal(AttributesTestEnum.IgnorePrinting, Pretty.Parse<AttributesTestEnum>("IgnorePrinting"));
+    Assert.Equal(AttributesTestEnum.DescriptionAndName, Pretty.Parse<AttributesTestEnum>("Overridden Name"));
+  }
 
-      Assert.Equal(BindingFlags.Public | BindingFlags.Static, Pretty.Parse<BindingFlags>("Public Static", " "));
-    }
+  [Fact]
+  public void Parse_Flags() {
+    Assert.Equal(FlagsTestEnum.Flag1 | FlagsTestEnum.Flag2, Pretty.Parse<FlagsTestEnum>("Flag 1 | Flag 2"));
+    Assert.Equal(FlagsTestEnum.Flag1 | FlagsTestEnum.Flag4, Pretty.Parse<FlagsTestEnum>("Flag 1, Flag 4", ", "));
+    Assert.Equal(FlagsTestEnum.Flag1 | FlagsTestEnum.Flag8, Pretty.Parse<FlagsTestEnum>("Flag Eight ||| Flag 1", " ||| "));
 
-    [Fact]
-    public void Parse_UndefinedValues() {
-      Assert.Throws<FormatException>(() => Pretty.Parse<FlagsTestEnum>("abc"));
-      Assert.Throws<FormatException>(() => Pretty.Parse<FlagsTestEnum>(null));
-    }
+    Assert.Equal(BindingFlags.Public | BindingFlags.Static, Pretty.Parse<BindingFlags>("Public Static", " "));
+  }
 
-    [Fact]
-    public void TryParse_UndefinedValues() {
-      Assert.False(Pretty.TryParse<FlagsTestEnum>("abc", out _));
-      Assert.False(Pretty.TryParse<FlagsTestEnum>(null, out _));
-    }
+  [Fact]
+  public void Parse_UndefinedValues() {
+    Assert.Throws<FormatException>(() => Pretty.Parse<FlagsTestEnum>("abc"));
+    Assert.Throws<FormatException>(() => Pretty.Parse<FlagsTestEnum>(null));
+  }
+
+  [Fact]
+  public void TryParse_UndefinedValues() {
+    Assert.False(Pretty.TryParse<FlagsTestEnum>("abc", out _));
+    Assert.False(Pretty.TryParse<FlagsTestEnum>(null, out _));
   }
 }
