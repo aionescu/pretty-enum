@@ -1,7 +1,8 @@
 namespace PrettyEnum.Tests {
   using System;
-  using Xunit;
+  using System.Reflection;
   using TestEnums;
+  using Xunit;
 
   public class PrettyPrinterTests {
     [Fact]
@@ -40,6 +41,8 @@ namespace PrettyEnum.Tests {
 
       Assert.Equal("Flag 2, Flag Eight", (FlagsTestEnum.Flag2 | FlagsTestEnum.Flag8).PrettyPrint(", "));
       Assert.Equal("Flag 1, Flag 4, Flag16", (FlagsTestEnum.Flag16 | FlagsTestEnum.Flag1 | FlagsTestEnum.Flag4).PrettyPrint(", "));
+
+      Assert.Equal("Static Public", (BindingFlags.Public | BindingFlags.Static).PrettyPrint(" "));
     }
 
     [Fact]

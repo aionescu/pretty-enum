@@ -40,11 +40,11 @@ PrettyEnum also recognizes `DescriptionAttribute` from `System.ComponentModel` (
 
 You can also annotate either enum fields or whole enum types with the `IgnorePrettyPrintAttribute`, in which case the pretty-printer will just use the name of the enum field(s).
 
-It's also possible to get an array containing all the pretty names of a particular enum type:
+It's also possible to get a `ReadOnlySpan` containing all the pretty names of a particular enum type:
 
 ```cs
 Pretty.GetNames<DeliveryOptions>() == ["Same Day", "Fragile", "Contactless"]
-Pretty.GetNames(typeof(Color)) == ["Red", "Dark Red", "Even Darker Red"]
+Pretty.GetNames<Color>() == ["Red", "Dark Red", "Even Darker Red"]
 ```
 
 ### Flag-like Enums
@@ -72,13 +72,13 @@ enum DeliveryOptions {
 
 `pretty-enum` also supports parsing pretty-printed strings back into their corresponding enum values, including values containing multiple flags.
 
-Two methods are provided for this purpse: `Pretty.Parse` and `Pretty.TryParse`.
+Two methods are provided for this purpse: `Pretty.TryParse` (which returns a `bool` indicating success or failure, and writes the parsed enum value to an `out` parameter), and `Pretty.Parse` (which directly returns the parsed enum value, or throws an exception on failure).
 
 Example:
 
 ```cs
 Pretty.Parse<DeliveryOptions>("Same Day | Fragile") == (DeliveryOptions.SameDay | DeliveryOptions.ExtraPackaging)
-Pretty.Parse(typeof(BindingFlags), "Public | Static") == (BindingFlags.Public | BindingFlags.Static)
+Pretty.Parse<BindingFlags>("Static & Public", " & ") == (BindingFlags.Public | BindingFlags.Static)
 Pretty.TryParse<DeliveryOptions>("Same Day, Contactless", out var value, flagSeparator: ", ") // returns true, value == (DeliveryOptions.SameDay | DeliveryOptions.Contactless)
 ```
 

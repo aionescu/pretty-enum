@@ -1,7 +1,8 @@
 namespace PrettyEnum.Tests {
   using System;
-  using Xunit;
+  using System.Reflection;
   using TestEnums;
+  using Xunit;
 
   public class ParserTests {
     [Fact]
@@ -15,8 +16,9 @@ namespace PrettyEnum.Tests {
     public void Parse_Flags() {
       Assert.Equal(FlagsTestEnum.Flag1 | FlagsTestEnum.Flag2, Pretty.Parse<FlagsTestEnum>("Flag 1 | Flag 2"));
       Assert.Equal(FlagsTestEnum.Flag1 | FlagsTestEnum.Flag4, Pretty.Parse<FlagsTestEnum>("Flag 1, Flag 4", ", "));
-
       Assert.Equal(FlagsTestEnum.Flag1 | FlagsTestEnum.Flag8, Pretty.Parse<FlagsTestEnum>("Flag Eight ||| Flag 1", " ||| "));
+
+      Assert.Equal(BindingFlags.Public | BindingFlags.Static, Pretty.Parse<BindingFlags>("Public Static", " "));
     }
 
     [Fact]
