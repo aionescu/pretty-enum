@@ -8,5 +8,5 @@ namespace PrettyEnum {
   /// If applied to an enum type, it will affect all of its values.
   /// </summary>
   [AttributeUsage(AttributeTargets.Enum | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
-  public sealed class IgnorePrettyPrintAttribute: Attribute { }
+  public sealed class IgnorePrettyPrintAttribute : Attribute { }
 }

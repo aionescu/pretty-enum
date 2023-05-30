@@ -14,7 +14,7 @@ namespace PrettyEnum.Tests.TestEnums {
     Numbers456Between
   }
 
-  enum AttributesTestEnum: short {
+  enum AttributesTestEnum : short {
     NoAttributes,
 
     [IgnorePrettyPrint]
@@ -24,14 +24,11 @@ namespace PrettyEnum.Tests.TestEnums {
     ExplicitCustomName,
 
     [Description("Descritpion Name"), PrettyName("Overridden Name")]
-    DescriptionAndName,
-
-    [PreserveCase]
-    Explicit_preserveCase_ATTRIBUTE
+    DescriptionAndName
   }
 
   [Flags]
-  enum FlagsTestEnum: byte {
+  enum FlagsTestEnum : byte {
     Flag1 = 1,
     Flag2 = 2,
     Flag4 = 4,

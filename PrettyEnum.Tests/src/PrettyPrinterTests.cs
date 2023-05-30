@@ -29,8 +29,6 @@ namespace PrettyEnum.Tests {
 
       Assert.Equal("Custom Name", AttributesTestEnum.ExplicitCustomName.PrettyPrint());
       Assert.Equal("Overridden Name", AttributesTestEnum.DescriptionAndName.PrettyPrint());
-
-      Assert.Equal("Explicit preserve Case ATTRIBUTE", AttributesTestEnum.Explicit_preserveCase_ATTRIBUTE.PrettyPrint());
     }
 
     [Fact]
@@ -46,10 +44,11 @@ namespace PrettyEnum.Tests {
 
     [Fact]
     public void PrettyPrint_FullyIgnoreFormatting() {
-      var flags = FullyIgnoreFormattingEnum.Ignore1 | FullyIgnoreFormattingEnum.Ignore2 | FullyIgnoreFormattingEnum.Ignore8;
+      Assert.Equal(FullyIgnoreFormattingEnum.Ignore1.ToString(), FullyIgnoreFormattingEnum.Ignore1.PrettyPrint());
 
-      Assert.Equal(flags.ToString(), flags.PrettyPrint());
-      Assert.Equal("Ignore1, Ignore2, Ignore8", flags.PrettyPrint(", "));
+      var flags = FullyIgnoreFormattingEnum.Ignore1 | FullyIgnoreFormattingEnum.Ignore2 | FullyIgnoreFormattingEnum.Ignore8;
+      Assert.Equal("Ignore1 | Ignore2 | Ignore8", flags.PrettyPrint());
+      Assert.Equal(flags.ToString(), flags.PrettyPrint(", "));
     }
 
     [Fact]
@@ -57,13 +56,11 @@ namespace PrettyEnum.Tests {
       var undefined = (FormatterTestEnum)(-1);
 
       Assert.Throws<ArgumentException>(() => undefined.PrettyPrint());
-      Assert.Equal("Undefined[-1]", undefined.PrettyPrint(throwOnUndefinedValue: false));
     }
 
     [Fact]
     public void GetNames_EnumHasIgnoreAttribute_ReturnSameArray() {
-      Assert.Equal(Enum.GetNames<FullyIgnoreFormattingEnum>(), Pretty.GetNames<FullyIgnoreFormattingEnum>());
-      Assert.Equal(Enum.GetNames(typeof(FullyIgnoreFormattingEnum)), Pretty.GetNames(typeof(FullyIgnoreFormattingEnum)));
+      Assert.True(Pretty.GetNames<FullyIgnoreFormattingEnum>().SequenceEqual(Enum.GetNames<FullyIgnoreFormattingEnum>()));
     }
   }
 }

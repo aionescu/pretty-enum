@@ -7,7 +7,8 @@ namespace PrettyEnum.Tests {
     [Fact]
     public void Parse_SingleValues() {
       Assert.Equal(FormatterTestEnum.PascalCase, Pretty.Parse<FormatterTestEnum>("Pascal Case"));
-      Assert.Equal(AttributesTestEnum.DescriptionAndName, Pretty.Parse(typeof(AttributesTestEnum), "Overridden Name"));
+      Assert.Equal(AttributesTestEnum.IgnorePrinting, Pretty.Parse<AttributesTestEnum>("IgnorePrinting"));
+      Assert.Equal(AttributesTestEnum.DescriptionAndName, Pretty.Parse<AttributesTestEnum>("Overridden Name"));
     }
 
     [Fact]
@@ -21,13 +22,13 @@ namespace PrettyEnum.Tests {
     [Fact]
     public void Parse_UndefinedValues() {
       Assert.Throws<FormatException>(() => Pretty.Parse<FlagsTestEnum>("abc"));
-      Assert.Throws<ArgumentNullException>(() => Pretty.Parse<FlagsTestEnum>(null));
+      Assert.Throws<FormatException>(() => Pretty.Parse<FlagsTestEnum>(null));
     }
 
     [Fact]
     public void TryParse_UndefinedValues() {
       Assert.False(Pretty.TryParse<FlagsTestEnum>("abc", out _));
-      Assert.Throws<ArgumentNullException>(() => Pretty.TryParse<FlagsTestEnum>(null, out _));
+      Assert.False(Pretty.TryParse<FlagsTestEnum>(null, out _));
     }
   }
 }

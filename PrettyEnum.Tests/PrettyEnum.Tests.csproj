@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <RollForward>LatestMajor</RollForward>
+    <RollForward>Major</RollForward>
     <LangVersion>latest</LangVersion>
 
     <IsPackable>false</IsPackable>
