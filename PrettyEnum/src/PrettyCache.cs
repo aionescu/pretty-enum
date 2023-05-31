@@ -1,15 +1,13 @@
 namespace PrettyEnum;
 
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text.RegularExpressions;
+using System.Text;
 
 static class PrettyCache<TEnum> where TEnum : struct, Enum {
-  internal static readonly bool hasIgnoreAttribute, hasFlagsAttribute;
+  internal static readonly bool hasFlagsAttribute;
 
-  internal static readonly TEnum[] enumValues;
   internal static readonly string[] enumPrettyNames;
   internal static readonly Dictionary<TEnum, string> singleValueCache;
   internal static readonly Dictionary<string, TEnum> singleValueReverseCache;
@@ -19,90 +17,100 @@ static class PrettyCache<TEnum> where TEnum : struct, Enum {
   internal static readonly Func<TEnum, TEnum, bool>? and;
 
   static PrettyCache() {
-    hasIgnoreAttribute = HasAttribute<IgnorePrettyPrintAttribute>(typeof(TEnum), out _);
-    hasFlagsAttribute = HasAttribute<FlagsAttribute>(typeof(TEnum), out _);
+    var hasIgnoreAttr = typeof(TEnum).GetCustomAttribute<IgnorePrettyPrintAttribute>() is not null;
+    var hasFlagsAttr = typeof(TEnum).GetCustomAttribute<FlagsAttribute>() is not null;
 
-    enumValues = (Enum.GetValues(typeof(TEnum)) as TEnum[])!;
+    var enumValues = (Enum.GetValues(typeof(TEnum)) as TEnum[])!;
     var enumValueNames = Enum.GetNames(typeof(TEnum));
 
-    singleValueCache = new(enumValues.Length);
-    singleValueReverseCache = new(enumValues.Length);
+    Dictionary<TEnum, string> cache = new(enumValues.Length);
+    Dictionary<string, TEnum> reverseCache = new(enumValues.Length);
 
-    if (hasIgnoreAttribute) {
-      enumPrettyNames = enumValueNames;
-
-      for (int i = 0; i < enumValues.Length; ++i) {
+    if (hasIgnoreAttr) {
+      for (var i = 0; i < enumValues.Length; ++i) {
         var value = enumValues[i];
         var name = enumValueNames[i];
-        singleValueCache[value] = name;
-        singleValueReverseCache[name] = value;
+        cache[value] = name;
+        reverseCache[name] = value;
       }
-    } else {
-      enumPrettyNames = new string[enumValues.Length];
 
-      for (int i = 0; i < enumValues.Length; ++i) {
+      enumPrettyNames = enumValueNames;
+    } else {
+      var prettyNames = new string[enumValues.Length];
+
+      for (var i = 0; i < enumValues.Length; ++i) {
         var value = enumValues[i];
         var prettyName = PrettyPrintSingleValue(enumValueNames[i]);
 
-        enumPrettyNames[i] = prettyName;
-        singleValueCache[value] = prettyName;
-        singleValueReverseCache[prettyName] = value;
+        prettyNames[i] = prettyName;
+        cache[value] = prettyName;
+        reverseCache[prettyName] = value;
+      }
+
+      enumPrettyNames = prettyNames;
+    }
+
+    if (hasFlagsAttr) {
+      var t = Enum.GetUnderlyingType(typeof(TEnum));
+
+      var a = Expression.Parameter(typeof(TEnum));
+      var b = Expression.Parameter(typeof(TEnum));
+      var at = Expression.Convert(a, t);
+      var bt = Expression.Convert(b, t);
+
+      or = Expression.Lambda<Func<TEnum, TEnum, TEnum>>(Expression.Convert(Expression.Or(at, bt), typeof(TEnum)), a, b).Compile();
+      and = Expression.Lambda<Func<TEnum, TEnum, bool>>(Expression.NotEqual(Expression.And(at, bt), Expression.Default(t)), a, b).Compile();
+    }
+
+    hasFlagsAttribute = hasFlagsAttr;
+    singleValueCache = cache;
+    singleValueReverseCache = reverseCache;
+  }
+
+  private static string ToTitleCase(string rawName) {
+    StringBuilder sb = new(rawName.Length);
+
+    const byte UNDERSCORE = 0, OTHER = 1, LOWER = 2, UPPER = 3;
+    byte last = UNDERSCORE;
+
+    foreach (var c in rawName) {
+      if (c == '_') {
+        last = UNDERSCORE;
+      } else if (char.IsUpper(c)) {
+        if (last != UPPER)
+          sb.Append(' ').Append(c);
+        else
+          sb.Append(char.ToLower(c));
+        last = UPPER;
+      } else if (char.IsLower(c)) {
+        if ((last >> 1) == 0) // UNDERSCORE or OTHER
+          sb.Append(' ').Append(char.ToUpper(c));
+        else
+          sb.Append(c);
+        last = LOWER;
+      } else {
+        if (last != OTHER)
+          sb.Append(' ');
+        sb.Append(c);
+        last = OTHER;
       }
     }
 
-    if (hasFlagsAttribute) {
-      var t = Enum.GetUnderlyingType(typeof(TEnum));
-      var a = Expression.Parameter(typeof(TEnum));
-      var b = Expression.Parameter(typeof(TEnum));
-
-      var convertA = Expression.Convert(a, t);
-      var convertB = Expression.Convert(b, t);
-
-      or = Expression.Lambda<Func<TEnum, TEnum, TEnum>>(Expression.Convert(Expression.Or(convertA, convertB), typeof(TEnum)), a, b).Compile();
-      and = Expression.Lambda<Func<TEnum, TEnum, bool>>(Expression.NotEqual(Expression.And(convertA, convertB), Expression.Default(t)), a, b).Compile();
-    }
-  }
-
-  private static bool HasAttribute<TAttribute>(MemberInfo memberInfo, [NotNullWhen(true)] out TAttribute? attribute) where TAttribute : Attribute {
-    var attrs = (memberInfo.GetCustomAttributes(typeof(TAttribute), false) as TAttribute[])!;
-
-    if (attrs.Length > 0) {
-      attribute = attrs[0];
-      return true;
-    } else {
-      attribute = default;
-      return false;
-    }
-  }
-
-  private static string FromCamelCase(string s) {
-    var ro = RegexOptions.Compiled | RegexOptions.CultureInvariant;
-
-    s = Regex.Replace(s, "([A-Z])([a-z])", " $1$2", ro);
-    s = Regex.Replace(s, "([a-z])([A-Z])", "$1 $2", ro);
-    s = Regex.Replace(s, "([0-9])([a-zA-Z])", " $1$2", ro);
-    s = Regex.Replace(s, "([a-zA-Z])([0-9])", "$1 $2", ro);
-
-    var words =
-      s.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-      .Select(w => char.ToUpperInvariant(w[0]) + w.Substring(1).ToLowerInvariant());
-
-    return string.Join(" ", words);
+    return sb.Length == 0 ? rawName : sb.ToString(1, sb.Length - 1);
   }
 
   private static string PrettyPrintSingleValue(string rawName) {
     var field = typeof(TEnum).GetField(rawName)!;
 
-    if (HasAttribute<IgnorePrettyPrintAttribute>(field, out _))
+    if (field.GetCustomAttribute<IgnorePrettyPrintAttribute>() is not null)
       return rawName;
 
-    if (HasAttribute<PrettyNameAttribute>(field, out var attr) && !string.IsNullOrWhiteSpace(attr.PrettyName))
-      return attr.PrettyName;
+    if (field.GetCustomAttribute<PrettyNameAttribute>() is { PrettyName: var prettyName } && !string.IsNullOrWhiteSpace(prettyName))
+      return prettyName;
 
-    if (HasAttribute<DescriptionAttribute>(field, out var descAttr) && !string.IsNullOrWhiteSpace(descAttr.Description))
-      return descAttr.Description;
+    if (field.GetCustomAttribute<DescriptionAttribute>() is { Description: var desc } && !string.IsNullOrWhiteSpace(desc))
+      return desc;
 
-    var words = rawName.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries).Select(FromCamelCase);
-    return string.Join(" ", words);
+    return ToTitleCase(rawName);
   }
 }

@@ -1,6 +1,8 @@
 [assembly: System.CLSCompliant(true)]
 namespace PrettyEnum;
 
+using System.Text;
+
 /// <summary>
 /// Static class that contains methods for pretty-printing enum values and parsing pretty-printed names.
 /// </summary>
@@ -15,6 +17,7 @@ public static class Pretty {
 
     var i = 0;
     TEnum tmp = default;
+
     while (i < flags.Length && PrettyCache<TEnum>.singleValueReverseCache.TryGetValue(flags[i], out var flag)) {
       tmp = PrettyCache<TEnum>.or!(tmp, flag);
       ++i;
@@ -49,15 +52,16 @@ public static class Pretty {
       return cachedPrettyName;
 
     if (PrettyCache<TEnum>.hasFlagsAttribute) {
-      var flags =
-        PrettyCache<TEnum>.enumValues
-        .Where(v => PrettyCache<TEnum>.and!(value, v))
-        .Select(f => PrettyCache<TEnum>.singleValueCache[f])
-        .ToList();
+      if (string.IsNullOrEmpty(flagSeparator))
+        flagSeparator = Pretty.DefaultFlagSeparator;
 
-      flagSeparator ??= Pretty.DefaultFlagSeparator;
-      if (flags.Count > 0)
-        return string.Join(flagSeparator, flags);
+      StringBuilder sb = new();
+      foreach (var kvp in PrettyCache<TEnum>.singleValueCache)
+        if (PrettyCache<TEnum>.and!(value, kvp.Key))
+          (sb.Length == 0 ? sb : sb.Append(flagSeparator)).Append(kvp.Value);
+
+      if (sb.Length > 0)
+        return sb.ToString();
     }
 
     throw new ArgumentException($"Value {value} is not defined for the enum type {typeof(TEnum).Name}.");
@@ -82,7 +86,7 @@ public static class Pretty {
       return true;
 
     if (PrettyCache<TEnum>.hasFlagsAttribute)
-      return TryParseMultiFlags(prettyName, flagSeparator ?? DefaultFlagSeparator, out result);
+      return TryParseMultiFlags(prettyName, string.IsNullOrEmpty(flagSeparator) ? DefaultFlagSeparator : flagSeparator, out result);
 
     return false;
   }
@@ -96,10 +100,8 @@ public static class Pretty {
   /// is annotated with <see cref="System.FlagsAttribute"/>. Defaults to <see cref="Pretty.DefaultFlagSeparator"/>.</param>
   /// <returns>The enum value that corresponds to the specified pretty-printed string.</returns>
   /// <exception cref="System.FormatException">Thrown if <paramref name="prettyName"/> is not the pretty name of any enum value.</exception>
-  public static TEnum Parse<TEnum>(string? prettyName, string? flagSeparator = null) where TEnum : struct, Enum {
-    if (TryParse<TEnum>(prettyName, out var result, flagSeparator))
-      return result;
-    else
-      throw new FormatException("Input string was not in a correct format.");
-  }
+  public static TEnum Parse<TEnum>(string? prettyName, string? flagSeparator = null) where TEnum : struct, Enum =>
+    TryParse<TEnum>(prettyName, out var result, flagSeparator)
+    ? result
+    : throw new FormatException("Input string was not in a correct format.");
 }
