@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
 
     <LangVersion>latest</LangVersion>
+    <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 

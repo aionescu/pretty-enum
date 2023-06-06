@@ -3,6 +3,7 @@
     <TargetFrameworks>netstandard2.1; net7.0</TargetFrameworks>
 
     <LangVersion>latest</LangVersion>
+    <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
