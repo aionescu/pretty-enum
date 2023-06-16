@@ -1,6 +1,6 @@
 <!-- markdownlint-disable first-line-h1 -->
 
-## v3.0.0 \[2023-??-??\]
+## v3.0.0 \[2023-06-16\]
 
 * **\[Breaking\]** Dropped support for .NET Standard 2.0.
 * **\[Breaking\]** Revamped parsing and pretty-printing logic.

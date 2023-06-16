@@ -33,5 +33,6 @@
     <Copyright>Copyright (C) 2020-2023 Alex Ionescu</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageTags>enum;pretty-printing;formatting</PackageTags>
   </PropertyGroup>
 </Project>
