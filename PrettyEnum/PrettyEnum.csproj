@@ -33,6 +33,12 @@
     <Copyright>Copyright (C) 2020-2023 Alex Ionescu</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>enum;pretty-printing;formatting</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/"/>
+  </ItemGroup>
 </Project>
